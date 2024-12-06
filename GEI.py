@@ -6,7 +6,7 @@ import os
 import mplcursors
 
 
-def myEn(n:np.int64, x:np.float64)->np.float64:
+def En(n:np.int64, x:np.float64)->np.float64:
 
     """
     generalized exponential integral (GEI) for integer n >= 0 and real x >= 0
@@ -76,10 +76,10 @@ def myEn(n:np.int64, x:np.float64)->np.float64:
     except ValueError as e:
         print(f"Error: {str(e)}")
 
-E1 = partial(myEn, 1)
-E2 = partial(myEn, 2)
-E3 = partial(myEn, 3)
-E4 = partial(myEn, 4)
+E1 = partial(En, 1)
+E2 = partial(En, 2)
+E3 = partial(En, 3)
+E4 = partial(En, 4)
 
 if __name__ == "__main__":
     path = os.path.join('graphs', 'GEI.png')
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     for i in ind:
         Eval = np.zeros(arr.size)
         for j, x in enumerate(arr):
-            Eval[j] = myEn(i, x)
+            Eval[j] = En(i, x)
         line, = axs[0].plot(arr, Eval, color=col[i-1], label=f'$E_{i}(x)$', ls=style[i-1])
         cur = mplcursors.cursor(line, hover=True)
         cur.connect("add",
@@ -133,5 +133,5 @@ if __name__ == "__main__":
     for i in ind:
         Eval = np.zeros(arr.size)
         for j, x, in enumerate(arr):
-            Eval[j] = myEn(i, x)
+            Eval[j] = En(i, x)
         print(f'Error of my E_{i}: {np.linalg.norm(Eval-expn(i, arr), ord=2)}')
