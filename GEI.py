@@ -20,7 +20,8 @@ def myEn(n:np.int64, x:np.float64)->np.float64:
     
     Returns
     ----------
-    value of GEI
+    scalar
+        value of GEI
     """
 
     def psi(n:np.int64)->np.float64:

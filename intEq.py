@@ -6,18 +6,18 @@ from typing import Callable
 import mplcursors
 import os
 
-from GEI import E2, E3, E4
+from GEI import E2, E3
 
 class IntEq:
 
-    def __init__(self, L:np.int64, n:np.int64, s:np.float64, kappa:np.float64, theta_r:np.float64, I_l:np.float64):
-        self.L = L
-        self.n = n
-        self.s = s
-        self.kappa = kappa
+    def __init__(self, d:dict):
+        self.L = d['L']
+        self.n = d['n']
+        self.s = d['s']
+        self.kappa = d['kappa']
         self.alpha = self.kappa + self.s
-        self.theta_r = theta_r
-        self.I_l = I_l
+        self.theta_r = d['theta_r']
+        self.I_l = d['I_l']
         self.h = self.L/self.n
 
         self.A = np.zeros((self.n, self.n))
@@ -133,7 +133,7 @@ class IntEq:
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
         line, = axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia')
         axs.grid()
-        plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $s={self.s}$, "
+        plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
         plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
@@ -161,7 +161,7 @@ class IntEq:
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
         line, = axs.plot(arr, errors, color='fuchsia')
         axs.grid()
-        plt.title(f"Error for $L={self.L}$, $n={self.n}$, $s={self.s}$, "
+        plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.4f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
         plt.ylabel(f'$\\varepsilon$', fontsize=12, rotation=0, labelpad=15)
@@ -182,7 +182,15 @@ class IntEq:
 
 
 if __name__ == "__main__":
-    sol = IntEq(1, 5, 0.25, 0.3, 0.5, 800)
+    data = dict(
+        L = 1,
+        n = 100,
+        s = 0.25,
+        kappa = 0.3,
+        theta_r = 0.5,
+        I_l = 800
+    )
+    sol = IntEq(data)
     #print(sol.buildMatrixA(), '\n')
     #print(sol.buildMatrixD(), '\n')
     #print(sol.buildMatrixE(), '\n')
