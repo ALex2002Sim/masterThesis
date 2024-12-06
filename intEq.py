@@ -216,8 +216,8 @@ if __name__ == "__main__":
     )
     alpha = data['s'] + data['kappa']
     func = lambda x: 1 - data['I_l']/2*E2(alpha*x) - data['I_l']*data['theta_r']*E3(alpha*data['L'])*E2(alpha*(data['L']-x)) -\
-                  data['s']*data['theta_r']/2*E2(alpha*(data['L']-x))*(E3(0)-E3(alpha*data['L'])) - data['s']/(2*alpha)*(2*E2(0) - E2(alpha*x) -\
-                  E2(alpha*(data['L']-x)))
+                     data['s']*data['theta_r']/2*E2(alpha*(data['L']-x))*(E3(0)-E3(alpha*data['L'])) - data['s']/(2*alpha)*(2*E2(0) -\
+                     E2(alpha*x) -E2(alpha*(data['L']-x)))
     
     sol = IntEq(data, func)
     #print(sol.buildMatrixA(), '\n')
