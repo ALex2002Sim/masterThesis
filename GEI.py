@@ -13,10 +13,10 @@ def En(n:np.int64, x:np.float64)->np.float64:
 
     Parameters
     ----------
-    n : int
+    n: int
         order of GEI
-    x : float
-        real argument of GEI
+    x: float
+        argument of GEI
     
     Returns
     ----------
@@ -87,9 +87,10 @@ if __name__ == "__main__":
         os.makedirs('graphs')
 
     fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+    fig.patch.set_facecolor('black')
     arr = np.linspace(0.00001, 4, 1000)
     ind = np.int64(np.linspace(1, 4, 4))
-    col = np.array(['fuchsia', 'cyan', 'blue', 'purple'])
+    col = np.array(['fuchsia', 'cyan', 'deeppink', 'blueviolet'])
     style = np.array(['-', '-.', ':', '--'])
 
     for i in ind:
@@ -101,6 +102,7 @@ if __name__ == "__main__":
         cur.connect("add",
                    lambda sel: (
                           sel.annotation.set_text(f"$x$={sel.target[0]:.3f}\n$val$={sel.target[1]:.3f}"),
+                          sel.annotation.set_color('white'),
                           sel.annotation.get_bbox_patch().set_facecolor("violet"),
                           sel.annotation.get_bbox_patch().set_edgecolor("purple"),
                    ))
@@ -111,21 +113,24 @@ if __name__ == "__main__":
         cur.connect("add",
                    lambda sel: (
                           sel.annotation.set_text(f"$x$={sel.target[0]:.3f}\n$val$={sel.target[1]:.3f}"),
+                          sel.annotation.set_color('white'),
                           sel.annotation.get_bbox_patch().set_facecolor("violet"),
                           sel.annotation.get_bbox_patch().set_edgecolor("purple"),
                    ))
 
     for ax in axs:
+        ax.tick_params(colors='white')
+        ax.set_facecolor('black')
         ax.set_ylim(0, 1.5)
         ax.grid()
         ax.legend()
-        ax.set_xlabel('$x$', fontsize=12)
-        ax.set_ylabel('$E_n$', fontsize=12, rotation=0, labelpad=15)
+        ax.set_xlabel('$x$', fontsize=12, color='white')
+        ax.set_ylabel('$E_n$', fontsize=12, rotation=0, labelpad=15, color='white')
 
-    axs[0].set_title('My GEI')
-    axs[1].set_title('GEI from scipy')
+    axs[0].set_title('My GEI', color='white')
+    axs[1].set_title('GEI from scipy', color='white')
 
-    fig.suptitle('Tests for $E_n(x)$')
+    fig.suptitle('Tests for $E_n(x)$', color='white')
     fig.canvas.manager.set_window_title("GEI")
     plt.savefig(path, dpi=300, bbox_inches='tight')
     plt.show()

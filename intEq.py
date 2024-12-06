@@ -147,18 +147,22 @@ class IntEq:
         self.res = self.solve()
         arr = np.linspace(0, self.L, self.res.size)
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
+        fig.patch.set_facecolor('black')
+        axs.set_facecolor('black')
         line, = axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia')
         axs.grid()
         plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
-                  f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
-        plt.xlabel(f'$x$', fontsize=12)
-        plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
+                  f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$", color='white')
+        plt.xlabel(f'$x$', fontsize=12, color='white')
+        plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20, color='white')
+        axs.tick_params(colors='white')
         fig.canvas.manager.set_window_title("Solution")
 
         cursor = mplcursors.cursor(line, hover=True)
         cursor.connect("add",
                         lambda sel: (
                                sel.annotation.set_text(f"$x$={sel.target[0]:.3f}\n$\\mathcal{{S}}$={sel.target[1]:.3f}"),
+                               sel.annotation.set_color('white'),
                                sel.annotation.get_bbox_patch().set_facecolor("violet"),
                                sel.annotation.get_bbox_patch().set_edgecolor("purple"),))
         
@@ -175,18 +179,22 @@ class IntEq:
         errors = np.abs(self.res[1:-2] - np.ones(arr.size))
         #f = lambda x: x
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
+        fig.patch.set_facecolor('black')
+        axs.set_facecolor('black')
         line, = axs.plot(arr, errors, color='fuchsia')
         axs.grid()
         plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
-                  f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
-        plt.xlabel(f'$x$', fontsize=12)
-        plt.ylabel(f'$\\varepsilon$', fontsize=12, rotation=0, labelpad=15)
+                  f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$", color='white')
+        plt.xlabel(f'$x$', fontsize=12, color='white')
+        plt.ylabel(f'$\\varepsilon$', fontsize=12, rotation=0, labelpad=15, color='white')
         fig.canvas.manager.set_window_title("Error")
+        axs.tick_params(colors='white')
 
         cursor = mplcursors.cursor(line, hover=True)
         cursor.connect("add",
                    lambda sel: (
                           sel.annotation.set_text(f"$x$={sel.target[0]:.3f}\n$\\varepsilon$={sel.target[1]:.3f}"),
+                          sel.annotation.set_color('white'),
                           sel.annotation.get_bbox_patch().set_facecolor("violet"),
                           sel.annotation.get_bbox_patch().set_edgecolor("purple"),
                    ))
@@ -210,6 +218,7 @@ if __name__ == "__main__":
     func = lambda x: 1 - data['I_l']/2*E2(alpha*x) - data['I_l']*data['theta_r']*E3(alpha*data['L'])*E2(alpha*(data['L']-x)) -\
                   data['s']*data['theta_r']/2*E2(alpha*(data['L']-x))*(E3(0)-E3(alpha*data['L'])) - data['s']/(2*alpha)*(2*E2(0) - E2(alpha*x) -\
                   E2(alpha*(data['L']-x)))
+    
     sol = IntEq(data, func)
     #print(sol.buildMatrixA(), '\n')
     #print(sol.buildMatrixD(), '\n')
@@ -219,4 +228,4 @@ if __name__ == "__main__":
     #print(sol.buildVectorF(), '\n')
     #print(sol.solve())
     sol.solutionGraph()
-    #sol.errorGraph()
+    sol.errorGraph()
