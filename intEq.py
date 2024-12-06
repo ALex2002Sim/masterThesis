@@ -10,7 +10,7 @@ from GEI import E2, E3
 
 class IntEq:
 
-    def __init__(self, d:dict):
+    def __init__(self, d:dict, func:Callable[[np.float64], np.float64]):
         self.L = d['L']
         self.n = d['n']
         self.s = d['s']
@@ -25,6 +25,7 @@ class IntEq:
         self.D = np.zeros((self.n, self.n))
         self.e = np.zeros(self.n)
         self.b = np.zeros(self.n)
+        self.func = func
         self.fr = np.zeros(self.n)
 
         self.res = np.zeros(self.n)
@@ -190,7 +191,11 @@ if __name__ == "__main__":
         theta_r = 0.5,
         I_l = 800
     )
-    sol = IntEq(data)
+    alpha = data['s'] + data['kappa']
+    f = lambda x: 1 - data['I_l']/2*E2(alpha*x) - data['I_l']*data['theta_r']*E3(alpha*data['L'])*E2(alpha*(data['L']-x)) -\
+                  data['s']*data['theta_r']/2*E2(alpha*(data['L']-x))*(E3(0)-E3(alpha*data['L'])) - data['s']/(2*alpha)*(2*E2(0) - E2(alpha*x) -\
+                  E2(alpha*(data['L']-x)))
+    sol = IntEq(data, f)
     #print(sol.buildMatrixA(), '\n')
     #print(sol.buildMatrixD(), '\n')
     #print(sol.buildMatrixE(), '\n')
