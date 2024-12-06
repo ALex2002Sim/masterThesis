@@ -30,9 +30,6 @@ class IntEq:
 
         self.res = np.zeros(self.n)
 
-    # func = lambda self, x: 1 - self.I_l/2*E2(self.alpha*x) - self.I_l*self.theta_r*E3(self.alpha*self.L)*E2(self.alpha*(self.L-x)) -\
-    #                      self.s*self.theta_r/2*E2(self.alpha*(self.L-x))*(E3(0)-E3(self.alpha*self.L)) - self.s/(2*self.alpha)*(2*E2(0) - E2(self.alpha*x) - E2(self.alpha*(self.L-x)))
-
     def x(self, j:np.int64)->np.float64:
         if j == 0:
             res =  0
