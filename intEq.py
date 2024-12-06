@@ -9,6 +9,24 @@ import os
 from GEI import E2, E3
 
 class IntEq:
+    """
+    class that implements the solution to the integral equation of radiative transfer
+
+    Parameters
+    ----------
+    L: float
+        layer thickness
+    n: int
+        number of partition segments of [0, L]
+    s: float
+        dissipation coefficient
+    kappa: float
+        absorption coefficient
+    theta_r: float
+        refractive index of the bottom part of the layer
+    I_l: float
+        incident radiation intensity
+    """
 
     def __init__(self, d:dict, func:Callable[[np.float64], np.float64]):
         self.L = d['L']
@@ -26,7 +44,7 @@ class IntEq:
         self.e = np.zeros(self.n)
         self.b = np.zeros(self.n)
         self.func = func
-        self.fr = np.zeros(self.n)
+        self.f = np.zeros(self.n)
 
         self.res = np.zeros(self.n)
 
@@ -102,9 +120,9 @@ class IntEq:
     
     def buildVectorF(self)->np.ndarray:
         for i in range(1, self.n+1):
-            self.fr[i-1] = quad(self.func, self.x(i-1), self.x(i))[0]
+            self.f[i-1] = quad(self.func, self.x(i-1), self.x(i))[0]
 
-        return self.fr
+        return self.f
     
     def solve(self)->np.ndarray:
         self.D = self.buildMatrixD()
@@ -112,10 +130,10 @@ class IntEq:
         self.E = self.buildMatrixE()
         self.b = self.buildVectorB()
         self.e = self.buildVectorE()
-        self.fr = self.buildVectorF()
+        self.f = self.buildVectorF()
 
         B = self.A - self.s*self.theta_r*self.D - self.s/2*self.E
-        k = self.I_l/2*self.e + self.I_l*self.theta_r*E3(self.alpha*self.L)*self.b + self.fr
+        k = self.I_l/2*self.e + self.I_l*self.theta_r*E3(self.alpha*self.L)*self.b + self.f
 
         self.res = np.linalg.solve(B, k)
 
@@ -131,7 +149,7 @@ class IntEq:
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
         line, = axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia')
         axs.grid()
-        plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h}$, $s={self.s}$, "
+        plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
         plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
@@ -159,7 +177,7 @@ class IntEq:
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
         line, = axs.plot(arr, errors, color='fuchsia')
         axs.grid()
-        plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.4f}$, $s={self.s}$, "
+        plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
         plt.ylabel(f'$\\varepsilon$', fontsize=12, rotation=0, labelpad=15)
@@ -181,18 +199,18 @@ class IntEq:
 
 if __name__ == "__main__":
     data = dict(
-        L = 1,
-        n = 100,
+        L = 3,
+        n = 300,
         s = 0.25,
         kappa = 0.3,
         theta_r = 0.5,
         I_l = 800
     )
     alpha = data['s'] + data['kappa']
-    f = lambda x: 1 - data['I_l']/2*E2(alpha*x) - data['I_l']*data['theta_r']*E3(alpha*data['L'])*E2(alpha*(data['L']-x)) -\
+    func = lambda x: 1 - data['I_l']/2*E2(alpha*x) - data['I_l']*data['theta_r']*E3(alpha*data['L'])*E2(alpha*(data['L']-x)) -\
                   data['s']*data['theta_r']/2*E2(alpha*(data['L']-x))*(E3(0)-E3(alpha*data['L'])) - data['s']/(2*alpha)*(2*E2(0) - E2(alpha*x) -\
                   E2(alpha*(data['L']-x)))
-    sol = IntEq(data, f)
+    sol = IntEq(data, func)
     #print(sol.buildMatrixA(), '\n')
     #print(sol.buildMatrixD(), '\n')
     #print(sol.buildMatrixE(), '\n')
