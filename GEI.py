@@ -7,19 +7,19 @@ import os
 def En(n:np.int64, x:np.float64)->np.float64:
 
     """
-    generalized exponential integral (GEI) for integer n >= 0 and real x >= 0
+        Computes the Generalized Exponential Integral (GEI) for integer order n ≥ 0 and real argument x ≥ 0.
 
-    Parameters
-    ----------
-    n: int
-        order of GEI
-    x: float
-        argument of GEI
-    
-    Returns
-    ----------
-    scalar
-        value of GEI
+        Parameters
+        ----------
+        n : int
+            Order of the GEI (must be a non-negative integer).
+        x : float
+            Argument of the GEI (must be a non-negative real number).
+
+        Returns
+        -------
+        float
+            The computed value of the Generalized Exponential Integral.
     """
 
     def psi(n:np.int64)->np.float64:

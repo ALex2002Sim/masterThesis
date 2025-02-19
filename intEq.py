@@ -2,29 +2,32 @@ import numpy as np
 from scipy.integrate import quad
 from scipy.linalg import toeplitz
 from matplotlib import pyplot as plt
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Tuple
 import os
+
 
 from GEI import E3
 
 class IntEq:
     """
-    class that implements the solution to the integral equation of radiative transfer
+        Class for solving the integral equation of radiative transfer.
 
-    Parameters
-    ----------
-    L: float
-        layer thickness
-    n: int
-        number of partition segments of [0, L]
-    s: float
-        dissipation coefficient
-    kappa: float
-        absorption coefficient
-    theta_r: float
-        refractive index of the bottom part of the layer
-    I_l: float
-        incident radiation intensity
+        This class implements a numerical solution for the radiative transfer equation in a layered medium.
+
+        Parameters
+        ----------
+        L : float
+            Thickness of the layer.
+        n : int
+            Number of partition segments in the interval [0, L].
+        s : float
+            Dissipation coefficient, representing scattering and absorption losses.
+        kappa : float
+            Absorption coefficient, quantifying the medium's capacity to absorb radiation.
+        theta_r : float
+            Refractive index of the bottom boundary of the layer.
+        I_l : float
+            Intensity of incident radiation at the top boundary.
     """
 
     def __init__(self, d:Optional[Dict[str, float]], func:Callable[[np.float64], np.float64])->None:
@@ -56,80 +59,61 @@ class IntEq:
             res = j*self.h - self.h/2
         
         return res
-
-    def buildMatrixA(self)->np.ndarray:
+    
+    def buildMatrices(self)->Tuple[np.ndarray, np.ndarray, np.ndarray]:
         np.fill_diagonal(self.A, self.h)
         self.A[0, 0] = self.h/2
         self.A[-1, -1] = self.A[0, 0]
 
-        return self.A
-    
-    def buildMatrixD(self)->np.ndarray:
+
         vals = np.array([self.x(i) for i in np.arange(self.n+1)])
         myEnVals = np.array([E3(self.alpha*(self.L - el)) for el in vals])
         diffVals = np.diff(myEnVals)
-
         for i in range(self.n):
             for j in range(self.n):
                 self.D[i, j] = diffVals[i]*diffVals[j]
 
-        return np.power(self.alpha, -2)*self.D
-    
-    def buildMatrixE(self)->np.ndarray:
-        c:np.float64   = np.power(self.alpha, -2)
-        a:np.float64   = self.alpha*self.h
-        b:np.float64   = self.h*np.power(self.alpha, -1)
-        ind:np.ndarray = np.arange(1, self.n)
 
+        c = np.power(self.alpha, -2)
+        a = self.alpha*self.h
+        b = self.h*np.power(self.alpha, -1)
+        ind = np.arange(1, self.n)
         arr = np.zeros(self.n)
         for i in ind[1:]:
             arr[i-1] = E3(a*(i)) + E3(a*(i-2)) - 2*E3(a*(i-1))
         arr *= c
         arr[0] = 2*b + 2*c*E3(a) - c
-
         self.E = toeplitz(arr)
-
         arr = np.zeros(self.n)
         for i in ind[1:]:
             arr[i-1] = -E3(a*(i-1)) + E3(a*(i-2)) + E3(a*(i-0.5)) - E3(a*(i-1.5))
         self.E[:, 0] = c*arr
-
         arr = np.zeros(self.n)
         for i in ind[:-1]:
             arr[i-1] = -E3(self.alpha*(self.L + self.h*(0.5-i))) + E3(self.alpha*(self.L + self.h*(1.5-i))) + \
                         E3(self.alpha*(self.L-i*self.h)) - E3(self.alpha*(self.L-self.h*(i-1)))
         self.E[:, -1] = c*arr
-
         self.E[0, 0] = b + 2*c*E3(a/2) - c
         self.E[-1, -1] = self.E[0, 0]
-        
-        return self.E
+
+        return self.A, np.power(self.alpha, -2)*self.D, self.E
     
-    def buildVectorE(self)->np.ndarray:
+    def buildVectors(self)->Tuple[np.ndarray, np.ndarray, np.ndarray]:
         for i in range(1, self.n+1):
             self.e[i-1] = E3(self.alpha*self.x(i)) - E3(self.alpha*self.x(i-1))
 
-        return -np.power(self.alpha, -1)*self.e
-    
-    def buildVectorB(self)->np.ndarray:
         for i in range(1, self.n+1):
             self.b[i-1] = E3(self.alpha*(self.L - self.x(i))) - E3(self.alpha*(self.L - self.x(i-1)))
 
-        return np.power(self.alpha, -1)*self.b
-    
-    def buildVectorF(self)->np.ndarray:
         for i in range(1, self.n+1):
             self.f[i-1] = quad(self.func, self.x(i-1), self.x(i))[0]
 
-        return self.f
+        return -np.power(self.alpha, -1)*self.e, np.power(self.alpha, -1)*self.b, self.f
+
     
     def solve(self)->np.ndarray:
-        self.D = self.buildMatrixD()
-        self.A = self.buildMatrixA()
-        self.E = self.buildMatrixE()
-        self.b = self.buildVectorB()
-        self.e = self.buildVectorE()
-        self.f = self.buildVectorF()
+        self.A, self.D, self.E = self.buildMatrices()
+        self.e, self.b, self.f = self.buildVectors()
 
         B = self.A - self.s*self.theta_r*self.D - self.s/2*self.E
         k = self.I_l/2*self.e + self.I_l*self.theta_r*E3(self.alpha*self.L)*self.b + self.f
