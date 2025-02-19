@@ -18,5 +18,5 @@ if __name__ == "__main__":
     
     sol = IntEq(data, func)
     sol.solutionGraph()
-    sol.errorGraph()
+    #sol.errorGraph()
 

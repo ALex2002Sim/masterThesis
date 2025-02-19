@@ -95,14 +95,14 @@ if __name__ == "__main__":
         Eval = np.zeros(arr.size)
         for j, x in enumerate(arr):
             Eval[j] = En(i, x)
-        axs[0].plot(arr, Eval, color=col[i-1], label=f'$E_{i}(x)$', ls=style[i-1])
+        axs[0].plot(arr, Eval, color=col[i-1], label=f'$E_{i}(x)$', ls=style[i-1], linewidth=2)
 
     for i in ind:
-        axs[1].plot(arr, expn(i, arr), color=col[i-1], label=f'$E_{i}(x)$', ls=style[i-1])
+        axs[1].plot(arr, expn(i, arr), color=col[i-1], label=f'$E_{i}(x)$', ls=style[i-1], linewidth=2)
 
     for ax in axs:
         ax.set_ylim(0, 1.5)
-        ax.grid()
+        ax.grid(True, linestyle='--', alpha=0.6)
         ax.legend()
         ax.set_xlabel('$x$', fontsize=12)
         ax.set_ylabel('$E_n$', fontsize=12, rotation=0, labelpad=15)

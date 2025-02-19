@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 from typing import Callable, Dict, Optional, Tuple
 import os
 
-
 from GEI import E3
 
 class IntEq:
@@ -130,8 +129,8 @@ class IntEq:
         self.res = self.solve()
         arr = np.linspace(0, self.L, self.res.size)
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
-        axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia')
-        axs.grid()
+        axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia', linewidth=2)
+        axs.grid(True, linestyle='--', alpha=0.6)
         plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
@@ -150,8 +149,8 @@ class IntEq:
         arr = np.linspace(0, self.L, self.res.size)[1:-2]
         errors = np.abs(self.res[1:-2] - np.ones(arr.size))
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
-        axs.plot(arr, errors, color='fuchsia')
-        axs.grid()
+        axs.plot(arr, errors, color='fuchsia', linewidth=2)
+        axs.grid(True, linestyle='--', alpha=0.6)
         plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
