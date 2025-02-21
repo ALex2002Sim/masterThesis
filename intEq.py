@@ -4,8 +4,11 @@ from scipy.linalg import toeplitz
 from matplotlib import pyplot as plt
 from typing import Callable, Dict, Optional, Tuple
 import os
+import time
 
 from GEI import E3
+
+plt.style.use('seaborn-v0_8-darkgrid')
 
 class IntEq:
     """
@@ -113,18 +116,21 @@ class IntEq:
 
         return self.res
     
-    def solutionGraph(self)->None:
+    def solutionGraph(self)->str:
         path = os.path.join('graphs', 'solution.png')
         if not os.path.exists('graphs'):
             os.makedirs('graphs')
 
+        start = time.time()
         self.res = self.solve()
+        end = time.time()
+
         arr = np.linspace(0, self.L, self.res.size)
 
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
         fig.patch.set_facecolor('whitesmoke')
 
-        axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia', linewidth=2)
+        axs.plot(arr[1:-2], self.res[1:-2], color='darkmagenta', linewidth=2)
         #axs.plot(arr[1:-2], np.ones(arr[1:-2].size), color='cyan')
         axs.grid(True, linestyle='--', alpha=0.6)
         plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
@@ -132,11 +138,11 @@ class IntEq:
         plt.xlabel(f'$x$', fontsize=12)
         plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
         fig.canvas.manager.set_window_title("Solution")
-        plt.style.use('seaborn-v0_8-darkgrid')
-
         
         plt.savefig(path, dpi=300, bbox_inches='tight')
         plt.show()
+
+        return f"{end - start:.3f} s"
 
     def errorGraph(self)->None:
         path = os.path.join('graphs', 'error.png')
@@ -150,7 +156,7 @@ class IntEq:
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
         fig.patch.set_facecolor('whitesmoke')
 
-        axs.plot(arr, errors, color='fuchsia', linewidth=2)
+        axs.plot(arr, errors, color='darkmagenta', linewidth=2)
         axs.grid(True, linestyle='--', alpha=0.6)
         plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")

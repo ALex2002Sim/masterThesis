@@ -4,7 +4,7 @@ from GEI import E2, E3
 if __name__ == "__main__":
     data = dict(
         L = 3,
-        n = 500,
+        n = 1000,
         s = 0.1,
         kappa = 0.1,
         theta_r = 0.3,
@@ -17,6 +17,8 @@ if __name__ == "__main__":
                      E2(alpha*x) -E2(alpha*(data['L']-x)))
     
     sol = IntEq(data, func)
-    sol.solutionGraph()
-    #sol.errorGraph()
+    time = sol.solutionGraph()
+    sol.errorGraph()
+
+    print(f"Estimated time: {time}")
 

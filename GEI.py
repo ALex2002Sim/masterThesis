@@ -2,7 +2,7 @@ import numpy as np
 from scipy.special import factorial, expn
 from matplotlib import pyplot as plt
 import os
-
+plt.style.use('seaborn-v0_8-darkgrid')
 
 def En(n:np.int64, x:np.float64)->np.float64:
 
@@ -109,8 +109,8 @@ if __name__ == "__main__":
         ax.set_xlabel('$x$', fontsize=12)
         ax.set_ylabel('$E_n$', fontsize=12, rotation=0, labelpad=15)
 
-    axs[0].set_title('My GEI')
-    axs[1].set_title('GEI from scipy')
+    axs[0].set_title('My $E_n$')
+    axs[1].set_title('$E_n$ from $scipy$')
 
     fig.suptitle('Tests for $E_n(x)$')
     fig.canvas.manager.set_window_title("Generalized Exponential Integral")
