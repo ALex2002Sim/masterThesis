@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 from typing import Callable, Dict, Optional, Tuple
 import os
 
-
 from GEI import E3
 
 class IntEq:
@@ -50,15 +49,9 @@ class IntEq:
 
         self.res = np.zeros(self.n)
 
-    def x(self, j:np.int64)->np.float64:
-        if j == 0:
-            res =  0
-        elif j == self.n:
-            res = self.L
-        else:
-            res = j*self.h - self.h/2
-        
-        return res
+    def x(self, j: np.int64) -> np.float64:
+        return np.float64(0 if j == 0 else self.L if j == self.n else j * self.h - self.h / 2)
+
     
     def buildMatrices(self)->Tuple[np.ndarray, np.ndarray, np.ndarray]:
         np.fill_diagonal(self.A, self.h)
@@ -66,12 +59,10 @@ class IntEq:
         self.A[-1, -1] = self.A[0, 0]
 
 
-        vals = np.array([self.x(i) for i in np.arange(self.n+1)])
-        myEnVals = np.array([E3(self.alpha*(self.L - el)) for el in vals])
+        vals = np.array([self.x(i) for i in np.arange(self.n + 1)])
+        myEnVals = np.array([E3(self.alpha * (self.L - el)) for el in vals])
         diffVals = np.diff(myEnVals)
-        for i in range(self.n):
-            for j in range(self.n):
-                self.D[i, j] = diffVals[i]*diffVals[j]
+        self.D = np.outer(diffVals, diffVals)
 
 
         c = np.power(self.alpha, -2)
@@ -134,13 +125,15 @@ class IntEq:
         fig.patch.set_facecolor('whitesmoke')
 
         axs.plot(arr[1:-2], self.res[1:-2], color='fuchsia', linewidth=2)
-        axs.plot(arr[1:-2], np.ones(arr[1:-2].size), color='cyan')
+        #axs.plot(arr[1:-2], np.ones(arr[1:-2].size), color='cyan')
         axs.grid(True, linestyle='--', alpha=0.6)
         plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
                   f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
         plt.xlabel(f'$x$', fontsize=12)
         plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
         fig.canvas.manager.set_window_title("Solution")
+        plt.style.use('seaborn-v0_8-darkgrid')
+
         
         plt.savefig(path, dpi=300, bbox_inches='tight')
         plt.show()
