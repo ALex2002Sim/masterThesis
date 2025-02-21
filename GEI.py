@@ -86,6 +86,8 @@ if __name__ == "__main__":
         os.makedirs('graphs')
 
     fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+    fig.patch.set_facecolor('whitesmoke')
+
     arr = np.linspace(0.00001, 4, 1000)
     ind = np.int64(np.linspace(1, 4, 4))
     col = np.array(['fuchsia', 'cyan', 'deeppink', 'blueviolet'])
@@ -111,7 +113,7 @@ if __name__ == "__main__":
     axs[1].set_title('GEI from scipy')
 
     fig.suptitle('Tests for $E_n(x)$')
-    fig.canvas.manager.set_window_title("GEI")
+    fig.canvas.manager.set_window_title("Generalized Exponential Integral")
     plt.savefig(path, dpi=300, bbox_inches='tight')
     plt.show()
 

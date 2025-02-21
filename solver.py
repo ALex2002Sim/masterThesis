@@ -3,11 +3,11 @@ from GEI import E2, E3
 
 if __name__ == "__main__":
     data = dict(
-        L = 1,
+        L = 3,
         n = 500,
         s = 0.1,
         kappa = 0.1,
-        theta_r = 0.0,
+        theta_r = 0.3,
         I_l = 900
     )
     
