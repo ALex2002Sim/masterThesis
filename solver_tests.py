@@ -13,6 +13,6 @@ if __name__ == "__main__":
         
         sol = IntEq(test, func)
         time = sol.solutionGraph()
-        sol.errorGraph()
+        #sol.errorGraph()
         print(f"Estimated time: {time}")
 
