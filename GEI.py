@@ -86,7 +86,6 @@ if __name__ == "__main__":
         os.makedirs('graphs')
 
     fig, axs = plt.subplots(1, 2, figsize=(15, 5))
-    fig.patch.set_facecolor('whitesmoke')
 
     arr = np.linspace(0.00001, 4, 1000)
     ind = np.int64(np.linspace(1, 4, 4))

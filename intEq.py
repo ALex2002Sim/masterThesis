@@ -128,7 +128,6 @@ class IntEq:
         arr = np.linspace(0, self.L, self.res.size)
 
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
-        fig.patch.set_facecolor('whitesmoke')
 
         axs.plot(arr[1:-2], self.res[1:-2], color='darkmagenta', linewidth=2)
         #axs.plot(arr[1:-2], np.ones(arr[1:-2].size), color='cyan')
@@ -154,7 +153,6 @@ class IntEq:
         errors = np.abs(self.res[1:-2] - np.ones(arr.size))
 
         fig, axs = plt.subplots(1, 1, figsize=(10, 5))
-        fig.patch.set_facecolor('whitesmoke')
 
         axs.plot(arr, errors, color='darkmagenta', linewidth=2)
         axs.grid(True, linestyle='--', alpha=0.6)

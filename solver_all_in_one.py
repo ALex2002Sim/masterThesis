@@ -5,6 +5,8 @@ import numpy as np
 
 from tests import data, colors, labels
 
+plt.style.use('seaborn-v0_8-darkgrid')
+
 if __name__=="__main__":
     fig, axs = plt.subplots(1, 1, figsize=(10, 5))
 
@@ -24,6 +26,6 @@ if __name__=="__main__":
     plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
     axs.grid(True, linestyle='--', alpha=0.6)
     axs.legend()
-    plt.show()
 
     plt.savefig("graphs/all_solutions.png", dpi=300, bbox_inches='tight')
+    plt.show()
