@@ -117,7 +117,7 @@ class IntEq:
         return self.res
     
     def solutionGraph(self)->str:
-        path = os.path.join('graphs', 'solution.png')
+        path = os.path.join('graphs', f'sol_h={self.h}_s={self.s}_k={self.kappa}_th={self.theta_r}_I={self.I_l}.png')
         if not os.path.exists('graphs'):
             os.makedirs('graphs')
 
@@ -140,12 +140,12 @@ class IntEq:
         fig.canvas.manager.set_window_title("Solution")
         
         plt.savefig(path, dpi=300, bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
         return f"{end - start:.3f} s"
 
     def errorGraph(self)->None:
-        path = os.path.join('graphs', 'error.png')
+        path = os.path.join('graphs', f'err_h={self.h}_s={self.s}_k={self.kappa}_th={self.theta_r}_I={self.I_l}.png')
         if not os.path.exists('graphs'):
             os.makedirs('graphs')
 
@@ -166,5 +166,5 @@ class IntEq:
                       
 
         plt.savefig(path, dpi=300, bbox_inches='tight')
-        plt.show()
+        #plt.show()
         
