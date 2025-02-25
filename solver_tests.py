@@ -2,17 +2,19 @@ from intEq import IntEq
 from GEI import E2, E3
 
 from tests import data
+from graph import draw_graph
 
 if __name__ == "__main__":
 
-    for test in data:
-        alpha = test['s'] + test['kappa']
-        func = lambda x: 1 - test['I_l']/2*E2(alpha*x) - test['I_l']*test['theta_r']*E3(alpha*test['L'])*E2(alpha*(test['L']-x)) -\
-                        test['s']*test['theta_r']/alpha*E2(alpha*(test['L']-x))*(E3(0)-E3(alpha*test['L'])) - test['s']/(2*alpha)*(2*E2(0) -\
-                        E2(alpha*x) - E2(alpha*(test['L']-x)))
+    for i, test in enumerate(data):
+        L, n, s, kappa, theta_r, I_l = test
+        alpha = s + kappa
+        func = lambda x: 1 - I_l/2*E2(alpha*x) - I_l*theta_r*E3(alpha*L)*E2(alpha*(L-x)) -\
+                        s*theta_r/alpha*E2(alpha*(L-x))*(E3(0)-E3(alpha*L)) - s/(2*alpha)*(2*E2(0) - E2(alpha*x) - E2(alpha*(L-x)))
         
         sol = IntEq(test, func)
-        time = sol.solutionGraph()
-        #sol.errorGraph()
-        print(f"Estimated time: {time}")
+        res = sol.solve()
+        draw_graph(res, test, "Solution")
+        draw_graph(res, test, "Error")
 
+        print(f"Test {i+1} done...")

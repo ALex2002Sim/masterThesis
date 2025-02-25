@@ -1,14 +1,10 @@
 import numpy as np
 from scipy.integrate import quad
 from scipy.linalg import toeplitz
-from matplotlib import pyplot as plt
 from typing import Callable, Dict, Optional, Tuple
-import os
-import time
 
 from GEI import E3
-
-plt.style.use('seaborn-v0_8-darkgrid')
+from tests import params
 
 class IntEq:
     """
@@ -32,14 +28,14 @@ class IntEq:
             Intensity of incident radiation at the top boundary.
     """
 
-    def __init__(self, d:Optional[Dict[str, float]], func:Callable[[np.float64], np.float64])->None:
-        self.L = d['L']
-        self.n = d['n']
-        self.s = d['s']
-        self.kappa = d['kappa']
+    def __init__(self, d:params, func:Callable[[np.float64], np.float64])->None:
+        self.L = d.L
+        self.n = d.n
+        self.s = d.s
+        self.kappa = d.kappa
         self.alpha = self.kappa + self.s
-        self.theta_r = d['theta_r']
-        self.I_l = d['I_l']
+        self.theta_r = d.theta_r
+        self.I_l = d.I_l
         self.h = self.L/self.n
 
         self.A = np.zeros((self.n, self.n))
@@ -53,7 +49,7 @@ class IntEq:
         self.res = np.zeros(self.n)
 
     def x(self, j: np.int64) -> np.float64:
-        return np.float64(0 if j == 0 else self.L if j == self.n else j * self.h - self.h / 2)
+        return np.float64(0 if j == 0 else self.L if j == self.n else j * self.h - self.h/2)
 
     
     def buildMatrices(self)->Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -115,54 +111,3 @@ class IntEq:
         self.res = np.linalg.solve(B, k)
 
         return self.res
-    
-    def solutionGraph(self)->str:
-        path = os.path.join('graphs', f'sol_h={self.h}_s={self.s}_k={self.kappa}_th={self.theta_r}_I={self.I_l}.png')
-        if not os.path.exists('graphs'):
-            os.makedirs('graphs')
-
-        start = time.time()
-        self.res = self.solve()
-        end = time.time()
-
-        arr = np.linspace(0, self.L, self.res.size)
-
-        fig, axs = plt.subplots(1, 1, figsize=(10, 5))
-
-        axs.plot(arr[1:-2], self.res[1:-2], color='darkmagenta', linewidth=2)
-        #axs.plot(arr[1:-2], np.ones(arr[1:-2].size), color='cyan')
-        axs.grid(True, linestyle='--', alpha=0.6)
-        plt.title(f"Solution for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
-                  f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
-        plt.xlabel(f'$x$', fontsize=12)
-        plt.ylabel(f'$\\mathcal{{S}}(x)$', fontsize=12, rotation=0, labelpad=20)
-        fig.canvas.manager.set_window_title("Solution")
-        
-        plt.savefig(path, dpi=300, bbox_inches='tight')
-        #plt.show()
-
-        return f"{end - start:.3f} s"
-
-    def errorGraph(self)->None:
-        path = os.path.join('graphs', f'err_h={self.h}_s={self.s}_k={self.kappa}_th={self.theta_r}_I={self.I_l}.png')
-        if not os.path.exists('graphs'):
-            os.makedirs('graphs')
-
-        self.res = self.solve()
-        arr = np.linspace(0, self.L, self.res.size)[1:-2]
-        errors = np.abs(self.res[1:-2] - np.ones(arr.size))
-
-        fig, axs = plt.subplots(1, 1, figsize=(10, 5))
-
-        axs.plot(arr, errors, color='darkmagenta', linewidth=2)
-        axs.grid(True, linestyle='--', alpha=0.6)
-        plt.title(f"Error for $L={self.L}$, $n={self.n}$, $h={self.h:.5f}$, $s={self.s}$, "
-                  f"$\\varkappa={self.kappa}$, $\\theta_r={self.theta_r}$, $I_{{\\ell}}={self.I_l}$")
-        plt.xlabel(f'$x$', fontsize=12)
-        plt.ylabel(f'$\\varepsilon$', fontsize=12, rotation=0, labelpad=15)
-        fig.canvas.manager.set_window_title("Error")
-                      
-
-        plt.savefig(path, dpi=300, bbox_inches='tight')
-        #plt.show()
-        
