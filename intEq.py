@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import quad
 from scipy.linalg import toeplitz
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Tuple
 
 from GEI import E3
 from tests import params
@@ -48,8 +48,8 @@ class IntEq:
 
         self.res = np.zeros(self.n)
 
-    def x(self, j: np.int64) -> np.float64:
-        return np.float64(0 if j == 0 else self.L if j == self.n else j * self.h - self.h/2)
+    def x(self, j:np.int64)->np.float64:
+        return np.float64(0 if j == 0 else self.L if j == self.n else j*self.h - self.h/2)
 
     
     def buildMatrices(self)->Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -59,7 +59,7 @@ class IntEq:
 
 
         vals = np.array([self.x(i) for i in np.arange(self.n + 1)])
-        myEnVals = np.array([E3(self.alpha * (self.L - el)) for el in vals])
+        myEnVals = np.array([E3(self.alpha*(self.L - el)) for el in vals])
         diffVals = np.diff(myEnVals)
         self.D = np.outer(diffVals, diffVals)
 

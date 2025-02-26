@@ -1,12 +1,11 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from typing import Optional, Dict
 import os
 from tests import params
 
 plt.style.use('seaborn-v0_8-darkgrid')
 
-def draw_graph(res: np.ndarray, data:params, graph_type:str)->None:
+def draw_graph(res:np.ndarray, data:params, graph_type:str)->None:
     y_label = {"Error": "$\\varepsilon$", "Solution": "$\\mathcal{{S}}(x)$"}
     folder = "graphs"
     L, n, s, kappa, theta_r, I_l = data
