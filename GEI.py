@@ -74,10 +74,8 @@ def En(n:np.int64, x:np.float64)->np.float64:
     except ValueError as e:
         print(f"Error: {str(e)}")
 
-E1 = lambda x: En(1, x)
-E2 = lambda x: En(2, x)
-E3 = lambda x: En(3, x)
-E4 = lambda x: En(4, x)
+for n in range(1, 5):
+    globals()[f"E{n}"] = lambda x, n=n: En(n, x)
 
 
 if __name__ == "__main__":
