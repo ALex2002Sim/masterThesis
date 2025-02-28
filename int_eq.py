@@ -1,7 +1,8 @@
-from typing import Callable, Tuple
+from typing import Any, Callable, Tuple
+
 import numpy as np
-from scipy.integrate import quad
-from scipy.linalg import toeplitz
+from scipy.integrate import quad  # type: ignore
+from scipy.linalg import toeplitz  # type: ignore
 
 from gei import e3
 from tests import Params
@@ -52,7 +53,13 @@ class IntEq:
             0 if j == 0 else self.l if j == self.n else j * self.h - self.h / 2
         )
 
-    def build_matrices(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def build_matrices(
+        self,
+    ) -> Tuple[
+        np.ndarray[Any, np.dtype[np.float64]],
+        np.ndarray[Any, np.dtype[np.float64]],
+        np.ndarray[Any, np.dtype[np.float64]],
+    ]:
         np.fill_diagonal(self.mtr_a, self.h)
         self.mtr_a[0, 0] = self.h / 2
         self.mtr_a[-1, -1] = self.mtr_a[0, 0]
@@ -95,7 +102,13 @@ class IntEq:
 
         return self.mtr_a, np.power(self.alpha, -2) * self.mtr_d, self.mtr_e
 
-    def build_vectors(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def build_vectors(
+        self,
+    ) -> Tuple[
+        np.ndarray[Any, np.dtype[np.float64]],
+        np.ndarray[Any, np.dtype[np.float64]],
+        np.ndarray[Any, np.dtype[np.float64]],
+    ]:
         for i in range(1, self.n + 1):
             self.e[i - 1] = e3(self.alpha * self.x(i)) - e3(self.alpha * self.x(i - 1))
 
@@ -113,7 +126,7 @@ class IntEq:
             self.f,
         )
 
-    def solve(self) -> np.ndarray:
+    def solve(self) -> np.ndarray[Any, np.dtype[np.float64]]:
         self.mtr_a, self.mtr_d, self.mtr_e = self.build_matrices()
         self.e, self.b, self.f = self.build_vectors()
 

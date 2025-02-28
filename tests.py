@@ -1,4 +1,5 @@
 from collections import namedtuple
+
 import numpy as np
 
 Params = namedtuple("Params", ["l", "n", "s", "kappa", "theta_r", "int_l"])

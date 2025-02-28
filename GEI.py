@@ -1,7 +1,8 @@
 import os
+
 import numpy as np
-from scipy.special import factorial, expn
 from matplotlib import pyplot as plt
+from scipy.special import expn, factorial  # type: ignore
 
 plt.style.use("seaborn-v0_8-darkgrid")
 
@@ -11,11 +12,15 @@ def exponential_integral(n: int, x_val: float) -> float:
     Computes the Generalized Exponential Integral (GEI).
 
     Parameters:
-    n (int): Order (must be ≥ 0).
-    x_val (float): Argument (must be ≥ 0).
+    -----------
+    n : int
+        Order (must be ≥ 0).
+    x_val : float
+        Argument (must be ≥ 0).
 
     Returns:
-    float: The computed GEI value.
+    -----------
+        float: The computed GEI value.
     """
 
     def psi(n_val: int) -> float:
@@ -24,13 +29,15 @@ def exponential_integral(n: int, x_val: float) -> float:
         return -np.euler_gamma + sum(1 / i for i in range(1, n_val))
 
     def series_mem(x_v: float, m_v: int, n_v: int) -> float:
-        return np.power(-x_v, m_v) * np.power((m_v - n_v + 1) * factorial(m_v), -1)
+        return float(
+            np.power(-x_v, m_v) * np.power((m_v - n_v + 1) * factorial(m_v), -1)
+        )
 
     if x_val < 0 or n < 0:
         raise ValueError("x and n must be non-negative")
 
     if n == 0:
-        return np.exp(-x_val) / x_val
+        return float(np.exp(-x_val) / x_val)
 
     if x_val == 0:
         return np.inf if n == 1 else 1 / (n - 1)
@@ -45,9 +52,9 @@ def exponential_integral(n: int, x_val: float) -> float:
                 ratio = abs(series_mem(x_val, m, n) / res)
             m += 1
 
-        return res
+        return float(res)
 
-    m, b, c = 1.0, x_val + n, 1.0e30
+    m, b, c = 1, x_val + n, 1.0e30
     d, f, eps, ratio = 1.0 / b, 1.0 / b, 1.0e-18, 10.0
 
     while ratio > eps:
@@ -60,7 +67,7 @@ def exponential_integral(n: int, x_val: float) -> float:
         m += 1
         ratio = abs(fact - 1.0)
 
-    return np.exp(-x_val) * f
+    return float(np.exp(-x_val) * f)
 
 
 def e1(x: float) -> float:
@@ -91,10 +98,10 @@ if __name__ == "__main__":
     style = ["-", "-.", ":", "--"]
 
     for i in ind:
-        Eval = np.array([exponential_integral(i, x) for x in arr])
+        e_val = np.array([exponential_integral(i, x) for x in arr])
         axs[0].plot(
             arr,
-            Eval,
+            e_val,
             color=col[i - 1],
             label=f"$E_{i}(x)$",
             ls=style[i - 1],
